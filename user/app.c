@@ -14,13 +14,10 @@
 #include "ds18b20.h"
 #include "dht22.h"
 
+#include "config.h"
+
 #define TICK_PAUSE          2000
 #define SAMPLE_COUNT        5
-
-const char ssid[] = "ze netvork";
-const char password[] = "putkeymyknee";
-
-const char temp_feed_url[] = "http://api.thingspeak.com/update?api_key=18VVA67LTIFRVM0D";
 
 struct station_config stationConf;
 
@@ -31,7 +28,6 @@ double dht_temp_accum;
 double dht_rh_accum;
 double ds_temp_accum;
 uint8_t accum_count;
-
 
 
 static int ICACHE_FLASH_ATTR
@@ -88,7 +84,7 @@ post_error(uint8_t errors) {
     char data[64];
     os_memset(data, 0, sizeof(data));
     os_sprintf(data, "field6=%d", errors);
-    http_post(temp_feed_url, data, http_callback_example);
+    http_post(temp_feed_url, data, http_post_cb);
 }
 
 static os_timer_t tick_timer;

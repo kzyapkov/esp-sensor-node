@@ -1,0 +1,5 @@
+build/
+firmware/
+sdk
+user/config.h
+
