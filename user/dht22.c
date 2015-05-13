@@ -8,18 +8,16 @@
  * ----------------------------------------------------------------------------
  */
 
+#include "espmissingincludes.h"
 #include "ets_sys.h"
 #include "osapi.h"
-#include "espmissingincludes.h"
 #include "c_types.h"
 #include "user_interface.h"
-#include "espconn.h"
 #include "mem.h"
 #include "gpio.h"
 
 #define MAXTIMINGS 10000
 #define BREAKTIME 20
-
 
 // #define DHT_PIN_MUX     PERIPHS_IO_MUX_GPIO2_U
 // #define DHT_PIN_FUNC    FUNC_GPIO2

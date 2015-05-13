@@ -33,7 +33,7 @@ LIBS		= c gcc hal pp phy net80211 lwip wpa main
 
 # compiler flags using during compilation of source files
 CFLAGS = \
-	-Os -ggdb -std=c99 -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-inline-functions \
+	-Os -ggdb -std=c11 -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-inline-functions \
 	-nostdlib -mlongcalls -mtext-section-literals  -D__ets__ -DICACHE_FLASH -Wno-address
 
 

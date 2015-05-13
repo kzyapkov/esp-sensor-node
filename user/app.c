@@ -29,6 +29,7 @@ double dht_rh_accum;
 double ds_temp_accum;
 uint8_t accum_count;
 
+static os_timer_t tick_timer;
 
 static int ICACHE_FLASH_ATTR
 print_float(char * target, float val) {
@@ -81,13 +82,11 @@ post_readings() {
 
 static void ICACHE_FLASH_ATTR
 post_error(uint8_t errors) {
-    char data[64];
+    char data[32];
     os_memset(data, 0, sizeof(data));
     os_sprintf(data, "field6=%d", errors);
     http_post(temp_feed_url, data, http_post_cb);
 }
-
-static os_timer_t tick_timer;
 
 static void ICACHE_FLASH_ATTR
 tick(void* arg) {
@@ -96,16 +95,16 @@ tick(void* arg) {
     uint8_t errors = 0;
 
     if (!htu21d_read_temp(&htu_temp)) {
-        errors |= BIT0;
+        errors |= BIT0;                 // 1
     }
     if (!htu21d_read_rh(&htu_rh)) {
-        errors |= BIT1;
+        errors |= BIT1;                 // 2
     }
     if (DS18B20_read(&ds_temp) < 0) {
-        errors |= BIT2;
+        errors |= BIT2;                 // 4
     }
     if (DHTread(&dht_temp, &dht_rh) < 0) {
-        errors |= BIT3;
+        errors |= BIT3;                 // 8
     }
 
     if (errors) {
@@ -113,12 +112,9 @@ tick(void* arg) {
     } else {
         htu_temp_accum += htu_temp;
         htu_rh_accum += htu_rh;
-
         dht_temp_accum += dht_temp;
         dht_rh_accum += dht_rh;
-
         ds_temp_accum += ds_temp;
-
         accum_count++;
     }
 
@@ -158,13 +154,17 @@ say_hello()
     os_timer_arm(&tick_timer, TICK_PAUSE, 1);
 }
 
-//Init function
 void ICACHE_FLASH_ATTR
 user_init()
 {
     // Initialize UART0
     uart_div_modify(0, UART_CLK_FREQ / 115200);
+
+    // disable debug output, sensors use the UART0 pins
     system_set_os_print(0);
+
     system_init_done_cb(say_hello);
+
+    // configure I2C SCL and DATA pins
     i2c_init();
 }
